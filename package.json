@@ -1,0 +1,42 @@
+{
+  "name": "samechan-crawler",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "ts-node -r tsconfig-paths/register ./src/main.ts",
+    "dev": "ts-node-dev --poll -r tsconfig-paths/register ./src/main.ts",
+    "package": "run-s clean compile packing",
+    "packing": "ncc build ./dist/main.js -o output/",
+    "compile": "tsc -p .",
+    "clean": "rimraf dist output",
+    "lint": "run-p -c lint:prettier lint:eslint lint:tsc",
+    "lint:prettier": "prettier --check src",
+    "lint:eslint": "eslint . --ext ts,tsx",
+    "lint:tsc": "tsc",
+    "fix": "run-s fix:prettier fix:eslint",
+    "fix:eslint": "eslint . --ext ts,tsx --fix",
+    "fix:prettier": "prettier --write src"
+  },
+  "devDependencies": {
+    "@book000/node-utils": "1.5.20",
+    "@book000/twitterts": "0.42.26",
+    "@types/node": "20.6.0",
+    "@typescript-eslint/eslint-plugin": "6.6.0",
+    "@typescript-eslint/parser": "6.6.0",
+    "@vercel/ncc": "0.38.0",
+    "eslint": "8.49.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-config-standard": "17.1.0",
+    "eslint-plugin-import": "2.28.1",
+    "eslint-plugin-n": "16.1.0",
+    "eslint-plugin-promise": "6.1.1",
+    "eslint-plugin-unicorn": "48.0.1",
+    "prettier": "3.0.3",
+    "ts-node": "10.9.1",
+    "ts-node-dev": "2.0.0",
+    "typescript": "5.2.2",
+    "yarn-run-all": "3.1.1"
+  }
+}
