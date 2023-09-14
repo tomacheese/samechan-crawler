@@ -2,7 +2,7 @@ import fs from 'node:fs'
 
 export class Notified {
   private path: string
-  private notified: number[] = []
+  private notified: string[] = []
 
   constructor(path: string) {
     this.path = path
@@ -12,11 +12,11 @@ export class Notified {
     }
   }
 
-  public isNotified(id: number): boolean {
+  public isNotified(id: string): boolean {
     return this.notified.includes(id)
   }
 
-  public add(id: number): void {
+  public add(id: string): void {
     this.notified.push(id)
     this.save()
   }
