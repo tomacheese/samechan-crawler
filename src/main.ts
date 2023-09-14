@@ -56,25 +56,31 @@ async function main() {
     const notified = new Notified(
       process.env.NOTIFIED_PATH || './data/notified.json'
     )
-    const isFirst = notified.isFirst()
-    logger.info(`📝 isFirst: ${isFirst}`)
-
-    for (const tweet of tweets.reverse()) {
-      if (notified.isNotified(tweet.id)) {
-        logger.info(`⏭️ Already notified: ${tweet.id}`)
-        continue
+    const initializeMode = notified.isFirst()
+    if (initializeMode) {
+      logger.info('💾 Initialize mode. Save all tweets to file')
+      for (const tweet of tweets) {
+        notified.add(tweet.id_str)
       }
 
+      logger.info('🚀 Closing browser...')
+      await twitter.close()
+      return
+    }
+    const notifyTweets = tweets.filter((tweet) => {
+      return !notified.isNotified(tweet.id_str) && tweet.full_text
+    })
+    logger.info(`🔔 Notify ${notifyTweets.length} tweets`)
+
+    for (const tweet of tweets.reverse()) {
       if (!isFullUser(tweet.user)) {
         continue
       }
 
-      notified.add(tweet.id)
+      logger.info(`✅ New tweet: ${tweet.id_str}`)
 
-      logger.info(`✅ New tweet: ${tweet.id}`)
-      if (isFirst) {
-        continue
-      }
+      const imageUrl =
+        tweet.entities.media && tweet.entities.media[0].media_url_https
 
       logger.info('📤 Sending to Discord...')
       await discord.sendMessage({
@@ -86,6 +92,7 @@ async function main() {
               url: `https://twitter.com/${tweet.user.screen_name}`,
               icon_url: tweet.user.profile_image_url_https,
             },
+            image: imageUrl ? { url: imageUrl } : undefined,
             footer: {
               text: 'Twitter',
               icon_url:
@@ -127,6 +134,10 @@ async function main() {
           },
         ],
       })
+      notified.add(tweet.id_str)
+
+      // wait 1 second (Discord API rate limit)
+      await new Promise((resolve) => setTimeout(resolve, 1000))
     }
   } catch (error) {
     logger.error("Error: Couldn't fetch tweets", error as Error)
@@ -136,5 +147,9 @@ async function main() {
 }
 
 ;(async () => {
-  await main()
+  await main().catch((error) => {
+    Logger.configure('main').error('❌ Error', error as Error)
+    // eslint-disable-next-line unicorn/no-process-exit
+    process.exit(1)
+  })
 })()
