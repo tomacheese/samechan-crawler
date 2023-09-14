@@ -35,6 +35,7 @@ ENV NODE_ENV production
 ENV LOG_DIR /data/logs/
 ENV CONFIG_PATH /data/config.json
 ENV NOTIFIED_PATH /data/notified.json
+ENV USER_DATA_DIRECTORY /data/userdata/
 
 VOLUME [ "/data" ]
 
