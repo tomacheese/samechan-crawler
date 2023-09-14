@@ -72,7 +72,7 @@ async function main() {
     })
     logger.info(`🔔 Notify ${notifyTweets.length} tweets`)
 
-    for (const tweet of tweets.reverse()) {
+    for (const tweet of notifyTweets.reverse()) {
       if (!isFullUser(tweet.user)) {
         continue
       }
