@@ -38,11 +38,11 @@ async function main() {
           webhookUrl: discordConfig.webhookUrl,
         })
       : discordConfig.token && discordConfig.channelId
-      ? new Discord({
-          token: discordConfig.token,
-          channelId: discordConfig.channelId,
-        })
-      : null
+        ? new Discord({
+            token: discordConfig.token,
+            channelId: discordConfig.channelId,
+          })
+        : null
     if (discord === null) {
       throw new Error('Discord config is invalid')
     }
