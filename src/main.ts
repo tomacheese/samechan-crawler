@@ -5,6 +5,7 @@ import { Discord, Logger } from '@book000/node-utils'
 import { FullUser } from 'twitter-d'
 
 function isFullUser(user: any): user is FullUser {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   return user.id_str !== undefined
 }
 
@@ -28,7 +29,7 @@ async function main() {
     otpSecret: config.get('twitter').otpSecret,
     puppeteerOptions: {
       executablePath: process.env.CHROMIUM_PATH,
-      userDataDirectory: process.env.USER_DATA_DIRECTORY || './data/userdata',
+      userDataDirectory: process.env.USER_DATA_DIRECTORY ?? './data/userdata',
     },
     debugOptions: {
       outputResponse: {
@@ -59,7 +60,7 @@ async function main() {
     logger.info(`🔍 Fetched ${tweets.length} tweets`)
 
     const notified = new Notified(
-      process.env.NOTIFIED_PATH || './data/notified.json'
+      process.env.NOTIFIED_PATH ?? './data/notified.json'
     )
     const initializeMode = notified.isFirst()
     if (initializeMode) {
@@ -84,8 +85,7 @@ async function main() {
 
       logger.info(`✅ New tweet: ${tweet.id_str}`)
 
-      const imageUrl =
-        tweet.entities.media && tweet.entities.media[0].media_url_https
+      const imageUrl = tweet.entities.media?.[0].media_url_https
 
       logger.info('📤 Sending to Discord...')
       await discord.sendMessage({
@@ -152,7 +152,7 @@ async function main() {
 }
 
 ;(async () => {
-  await main().catch((error) => {
+  await main().catch((error: unknown) => {
     Logger.configure('main').error('❌ Error', error as Error)
     // eslint-disable-next-line unicorn/no-process-exit
     process.exit(1)
