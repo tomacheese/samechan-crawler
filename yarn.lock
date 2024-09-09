@@ -46,19 +46,6 @@
     globals "15.9.0"
     typescript-eslint "8.4.0"
 
-"@book000/node-utils@1.13.243":
-  version "1.13.243"
-  resolved "https://registry.yarnpkg.com/@book000/node-utils/-/node-utils-1.13.243.tgz#5ae2c383a4992f484f3423abcd2d62f9f7c17b4e"
-  integrity sha512-S1esk5YeiTReP5HL9wL0l6Yke5gDso/TBsGxy1EtIVvky6PY248O9h7KYlttZO9VWTQIG1Z6slD6FmsdZSk+mA==
-  dependencies:
-    axios "1.7.7"
-    cycle "1.0.3"
-    form-data "4.0.0"
-    jsonc-parser "3.3.1"
-    moment-timezone "0.5.45"
-    winston "3.14.2"
-    winston-daily-rotate-file "5.0.0"
-
 "@book000/node-utils@1.13.244":
   version "1.13.244"
   resolved "https://registry.yarnpkg.com/@book000/node-utils/-/node-utils-1.13.244.tgz#0fcde1d9f1788acb19c3db8e7a32dbfe75af48fc"
@@ -72,12 +59,25 @@
     winston "3.14.2"
     winston-daily-rotate-file "5.0.0"
 
-"@book000/twitterts@0.69.77":
-  version "0.69.77"
-  resolved "https://registry.yarnpkg.com/@book000/twitterts/-/twitterts-0.69.77.tgz#f2f0f256fd40156f2ede34d19e65df9424e9c058"
-  integrity sha512-o9k9a/BL9bD4TIeuX+c9lKkxKg6ZsOqxeW+S5gPBWJT7RgWZr9xiQLx4iq4gL/mQlZgvRBCynizL75LV3Y0q3Q==
+"@book000/node-utils@1.13.245":
+  version "1.13.245"
+  resolved "https://registry.yarnpkg.com/@book000/node-utils/-/node-utils-1.13.245.tgz#89de309fcf1722cea36f408ececfb07e64cd16d3"
+  integrity sha512-ms7ZjA4toILEcOoNH9r0yT14ofhybdgvc6JP5WhbnnclaAaXdOxk/WyaQFsrXnhuiiWBc8nzZfTPFGC+uCTvHQ==
   dependencies:
-    "@book000/node-utils" "1.13.243"
+    axios "1.7.7"
+    cycle "1.0.3"
+    form-data "4.0.0"
+    jsonc-parser "3.3.1"
+    moment-timezone "0.5.45"
+    winston "3.14.2"
+    winston-daily-rotate-file "5.0.0"
+
+"@book000/twitterts@0.69.79":
+  version "0.69.79"
+  resolved "https://registry.yarnpkg.com/@book000/twitterts/-/twitterts-0.69.79.tgz#8fabec5153c19a8a18d870b6d4699ba45522f201"
+  integrity sha512-BY5ukTE1D8avLyB3tME4z8oaQqrxT48Q/4t/oRnwIXZ1HDnm57v6/gVSelLhGz4fQ3tOdHoBL/G02qmmCkHZtQ==
+  dependencies:
+    "@book000/node-utils" "1.13.245"
     genson-js "0.0.8"
     json-schema-to-typescript "15.0.2"
     mysql2 "3.11.0"
