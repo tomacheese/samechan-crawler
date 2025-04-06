@@ -27,6 +27,7 @@ async function main() {
     username: config.get('twitter').username,
     password: config.get('twitter').password,
     otpSecret: config.get('twitter').otpSecret,
+    emailAddress: config.get('twitter').emailAddress,
     puppeteerOptions: {
       executablePath: process.env.CHROMIUM_PATH,
       userDataDirectory: process.env.USER_DATA_DIRECTORY ?? './data/userdata',

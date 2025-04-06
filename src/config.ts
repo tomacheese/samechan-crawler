@@ -5,6 +5,7 @@ interface Config {
     username: string
     password: string
     otpSecret?: string
+    emailAddress?: string
   }
   discord: {
     webhookUrl?: string
