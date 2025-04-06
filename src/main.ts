@@ -55,7 +55,7 @@ async function main() {
 
     logger.info('🔍 Fetching tweets...')
     const tweets = await twitter.getUserTweets({
-      screenName: 'SameGauu',
+      screenName: process.env.TARGET_TWITTER_USERNAME ?? 'SameGauu',
     })
     logger.info(`🔍 Fetched ${tweets.length} tweets`)
 
