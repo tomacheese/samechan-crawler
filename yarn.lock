@@ -342,10 +342,10 @@
   dependencies:
     undici-types "~6.21.0"
 
-"@types/node@22.15.5":
-  version "22.15.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.15.5.tgz#187b472f09438783688c926ebe712ea3ae242bce"
-  integrity sha512-e3r3tiKxBr9e/+5uNRkF+K/2gnhR2V/EOY/gxNXviodSa3DYSqkYUR2Xp05l2uS/A7j864m8IQvdf+itWNIg1Q==
+"@types/node@22.15.11":
+  version "22.15.11"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.15.11.tgz#6714a9b3c67c6f87d63606f15f014146ec17f97e"
+  integrity sha512-rlyK0vuU7VLEYQfXuC7QTFxDvkb6tKhDI7wR4r6ZzM0k8BJd44W0jxo6xmUjqSs4AlYmiYfLJU2f0pAG/FtCRw==
   dependencies:
     undici-types "~6.21.0"
 
