@@ -23,7 +23,7 @@
     "@book000/eslint-config": "1.8.70",
     "@book000/node-utils": "1.15.21",
     "@book000/twitterts": "0.74.50",
-    "@types/node": "22.15.16",
+    "@types/node": "22.15.17",
     "@vercel/ncc": "0.38.3",
     "eslint": "9.26.0",
     "eslint-config-standard": "17.1.0",
