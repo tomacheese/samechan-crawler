@@ -57,10 +57,10 @@
     winston "3.17.0"
     winston-daily-rotate-file "5.0.0"
 
-"@book000/twitterts@0.77.29":
-  version "0.77.29"
-  resolved "https://registry.yarnpkg.com/@book000/twitterts/-/twitterts-0.77.29.tgz#5db6bda98aff3cb0b540f34a002f2ce77020b882"
-  integrity sha512-mhDTwgiHsxY8BXfdywKQ1d7nfOad6MZvHUKYEKGK899v13PHoL2Mj6GVAvMYDFMSYo4u+r55hziqIQAy1ssj/g==
+"@book000/twitterts@0.77.30":
+  version "0.77.30"
+  resolved "https://registry.yarnpkg.com/@book000/twitterts/-/twitterts-0.77.30.tgz#6542d252754c525e511acf31be5846b751c747a1"
+  integrity sha512-pnCIDHlIjrXUA18wFatarmowXF5Cva/8+LzYR48LWVxomsTizUML+1xWNJUB5DvF/PVvnV+GetvZeMgKRAVFDg==
   dependencies:
     "@book000/node-utils" "1.18.10"
     genson-js "0.0.8"
@@ -1387,22 +1387,6 @@ eslint-plugin-import@2.31.0:
     semver "^6.3.1"
     string.prototype.trimend "^1.0.8"
     tsconfig-paths "^3.15.0"
-
-eslint-plugin-n@17.19.0:
-  version "17.19.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-n/-/eslint-plugin-n-17.19.0.tgz#3c198306c2eb9ea950c7458cff9c9a6426d02c58"
-  integrity sha512-qxn1NaDHtizbhVAPpbMT8wWFaLtPnwhfN/e+chdu2i6Vgzmo/tGM62tcJ1Hf7J5Ie4dhse3DOPMmDxduzfifzw==
-  dependencies:
-    "@eslint-community/eslint-utils" "^4.5.0"
-    "@typescript-eslint/utils" "^8.26.1"
-    enhanced-resolve "^5.17.1"
-    eslint-plugin-es-x "^7.8.0"
-    get-tsconfig "^4.8.1"
-    globals "^15.11.0"
-    ignore "^5.3.2"
-    minimatch "^9.0.5"
-    semver "^7.6.3"
-    ts-declaration-location "^1.0.6"
 
 eslint-plugin-n@17.20.0:
   version "17.20.0"
