@@ -150,14 +150,14 @@ async function getUserInfo(userId: string): Promise<UserInfo> {
 
 ### ブランチ戦略
 
-- `main`: 本番環境用ブランチ
+- `master`: 本番環境用ブランチ
 - `feature/*`: 機能開発用ブランチ
 - `fix/*`: バグ修正用ブランチ
 - `docs/*`: ドキュメント更新用ブランチ
 
 ### Pull Request
 
-1. 機能ブランチから `main` ブランチへの PR を作成
+1. 機能ブランチから `master` ブランチへの PR を作成
 2. PR タイトルは Conventional Commits 形式で日本語記述
 3. 変更内容を詳細に日本語で説明
 4. レビューを受けてからマージ
@@ -246,4 +246,3 @@ yarn lint:tsc
 ### 外部ドキュメント
 
 - 設定方法や使用方法は Issue や Discussion で管理
-- 重要な変更は CHANGELOG として記録
