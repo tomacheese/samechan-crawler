@@ -1,11 +1,12 @@
 import fs from 'node:fs'
+import path from 'node:path'
 import { Scraper } from '@the-convocation/twitter-scraper'
 import { cycleTLSExit } from '@the-convocation/twitter-scraper/cycletls'
 import initCycleTLS, { CycleTLSClient } from 'cycletls'
 import { Headers } from 'headers-polyfill'
 import { TwitterOpenApi } from 'twitter-openapi-typescript'
-import { Notified } from './notified.js'
-import { SamechanCrawlerConfiguration } from './config.js'
+import { Notified } from './notified'
+import { SamechanCrawlerConfiguration } from './config'
 import { Discord, Logger } from '@book000/node-utils'
 
 // --- CycleTLS インスタンス管理 ---
@@ -217,11 +218,8 @@ function loadCachedCookies(): CachedCookies | null {
 }
 
 function saveCookies(authToken: string, ct0: string): void {
-  const dir = COOKIE_CACHE_FILE.slice(
-    0,
-    Math.max(0, COOKIE_CACHE_FILE.lastIndexOf('/'))
-  )
-  if (dir && !fs.existsSync(dir)) {
+  const dir = path.dirname(COOKIE_CACHE_FILE)
+  if (dir && dir !== '.' && !fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true })
   }
   const data: CachedCookies = {
@@ -562,20 +560,26 @@ async function main() {
 
 // --- クリーンアップ処理 ---
 async function cleanup(): Promise<void> {
+  const logger = Logger.configure('cleanup')
   // CycleTLS インスタンスのクリーンアップ（初期化されている場合のみ）
   if (cycleTLSInstancePromise) {
     try {
       const instance = await cycleTLSInstancePromise
       await instance.exit()
-    } catch {
-      // インスタンスの終了に失敗しても無視
+    } catch (error) {
+      // インスタンスの終了に失敗しても致命的ではないため、警告ログのみ出力する
+      logger.warn('CycleTLS インスタンスの終了に失敗しました', error as Error)
     }
   }
   // twitter-scraper の内部 CycleTLS インスタンスも終了
   try {
     cycleTLSExit()
-  } catch {
-    // 初期化されていない場合のエラーを無視
+  } catch (error) {
+    // 初期化されていない可能性が高いため、デバッグログとして記録する
+    logger.debug(
+      'twitter-scraper の内部 CycleTLS インスタンス終了処理でエラーが発生しました（未初期化の可能性）',
+      error as Error
+    )
   }
 }
 
