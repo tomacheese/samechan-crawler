@@ -1,9 +1,13 @@
 {
-  "ts-node": { "files": true },
+  "ts-node": {
+    "files": true,
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
   "compilerOptions": {
     "target": "es2020",
-    "module": "commonjs",
-    "moduleResolution": "Node",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "lib": ["ESNext", "esnext.AsyncIterable", "DOM"],
     "outDir": "./dist",
     "removeComments": true,
@@ -23,10 +27,7 @@
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
     "baseUrl": ".",
-    "newLine": "LF",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "newLine": "LF"
   },
   "include": ["src/**/*"]
 }
