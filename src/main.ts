@@ -568,7 +568,9 @@ async function cleanup(): Promise<void> {
       await instance.exit()
     } catch (error) {
       // インスタンスの終了に失敗しても致命的ではないため、警告ログのみ出力する
-      logger.warn('CycleTLS インスタンスの終了に失敗しました', error as Error)
+      const message =
+        error instanceof Error ? error.message : 'Unknown error occurred'
+      logger.warn(`CycleTLS インスタンスの終了に失敗しました: ${message}`)
     }
   }
   // twitter-scraper の内部 CycleTLS インスタンスも終了
@@ -576,9 +578,10 @@ async function cleanup(): Promise<void> {
     cycleTLSExit()
   } catch (error) {
     // 初期化されていない可能性が高いため、デバッグログとして記録する
+    const message =
+      error instanceof Error ? error.message : 'Unknown error occurred'
     logger.debug(
-      'twitter-scraper の内部 CycleTLS インスタンス終了処理でエラーが発生しました（未初期化の可能性）',
-      error as Error
+      `twitter-scraper の内部 CycleTLS インスタンス終了処理でエラーが発生しました（未初期化の可能性）: ${message}`
     )
   }
 }
