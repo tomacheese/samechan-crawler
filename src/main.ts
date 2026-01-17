@@ -432,9 +432,8 @@ async function main() {
       }
     )
 
-    // 結果の処理（null チェックを追加）
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    const tweets = tweetsResponse.data.data ?? []
+    // 結果の処理
+    const tweets = tweetsResponse.data.data
     logger.info(`🔍 Fetched ${tweets.length} tweets`)
 
     const notified = new Notified(
@@ -445,8 +444,7 @@ async function main() {
       logger.info('💾 Initialize mode. Save all tweets to file')
       for (const tweetResult of tweets) {
         const tweet = tweetResult.tweet
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-        const idStr = tweet.legacy?.idStr ?? tweet.restId ?? ''
+        const idStr = tweet.legacy?.idStr ?? tweet.restId
         if (idStr) {
           notified.add(idStr)
         }
@@ -456,8 +454,7 @@ async function main() {
 
     const notifyTweets = tweets.filter((tweetResult) => {
       const tweet = tweetResult.tweet
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const idStr = tweet.legacy?.idStr ?? tweet.restId ?? ''
+      const idStr = tweet.legacy?.idStr ?? tweet.restId
       const fullText = tweet.legacy?.fullText ?? ''
       return idStr && !notified.isNotified(idStr) && fullText
     })
@@ -469,13 +466,10 @@ async function main() {
       const legacy = tweet.legacy
 
       const fullText = legacy?.fullText ?? ''
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const screenName = user?.legacy?.screenName ?? 'unknown'
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const userName = user?.legacy?.name ?? ''
+      const screenName = user.legacy.screenName
+      const userName = user.legacy.name
       const createdAt = legacy?.createdAt ?? ''
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const idStr = legacy?.idStr ?? tweet.restId ?? ''
+      const idStr = legacy?.idStr ?? tweet.restId
 
       if (!idStr) {
         continue
@@ -491,8 +485,7 @@ async function main() {
       }
 
       // プロフィール画像 URL
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      const profileImageUrl = user?.legacy?.profileImageUrlHttps ?? ''
+      const profileImageUrl = user.legacy.profileImageUrlHttps
 
       logger.info('📤 Sending to Discord...')
       await discord.sendMessage({
