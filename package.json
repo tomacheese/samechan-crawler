@@ -6,8 +6,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node --import tsx ./src/main.ts",
-    "dev": "node --import tsx --watch ./src/main.ts",
+    "start": "tsx ./src/main.ts",
+    "dev": "tsx --watch ./src/main.ts",
     "package": "run-s clean compile packing",
     "packing": "ncc build ./dist/main.js -o output/",
     "compile": "tsc -p .",
