@@ -1,9 +1,4 @@
 {
-  "ts-node": {
-    "files": true,
-    "esm": true,
-    "experimentalSpecifierResolution": "node"
-  },
   "compilerOptions": {
     "target": "es2020",
     "module": "ESNext",
