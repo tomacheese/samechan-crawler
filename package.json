@@ -22,15 +22,15 @@
   },
   "dependencies": {
     "@book000/node-utils": "1.24.27",
-    "@the-convocation/twitter-scraper": "^0.21.1",
-    "cycletls": "^2.0.5",
-    "headers-polyfill": "^4.0.3",
-    "twitter-openapi-typescript": "^0.0.55"
+    "@the-convocation/twitter-scraper": "0.21.1",
+    "cycletls": "2.0.5",
+    "headers-polyfill": "4.0.3",
+    "twitter-openapi-typescript": "0.0.55"
   },
   "devDependencies": {
     "@book000/eslint-config": "1.12.37",
     "@types/node": "24.10.8",
-    "@types/tough-cookie": "^4.0.5",
+    "@types/tough-cookie": "4.0.5",
     "@vercel/ncc": "0.38.4",
     "eslint": "9.39.2",
     "eslint-config-standard": "17.1.0",
@@ -38,8 +38,8 @@
     "eslint-plugin-n": "17.23.2",
     "eslint-plugin-promise": "7.2.1",
     "prettier": "3.7.4",
-    "rimraf": "^6.1.2",
-    "tsx": "^4.21.0",
+    "rimraf": "6.1.2",
+    "tsx": "4.21.0",
     "typescript": "5.9.3",
     "yarn-run-all": "3.1.1"
   }
