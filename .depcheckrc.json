@@ -1,8 +1,11 @@
 {
   "ignores": [
+    "@types/tough-cookie",
     "eslint-config-standard",
     "eslint-plugin-import",
     "eslint-plugin-n",
-    "eslint-plugin-promise"
+    "eslint-plugin-promise",
+    "rimraf",
+    "tsx"
   ]
 }
