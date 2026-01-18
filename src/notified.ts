@@ -3,11 +3,15 @@ import fs from 'node:fs'
 export class Notified {
   private path: string
   private notified: string[] = []
+  // 初回実行かどうかをコンストラクタ時点で確定させるフラグ
+  private isFirstRun: boolean
 
   constructor(path: string) {
     this.path = path
+    // ファイルが存在しない場合は初回実行とみなす
+    this.isFirstRun = !fs.existsSync(path)
 
-    if (fs.existsSync(path)) {
+    if (!this.isFirstRun) {
       this.load()
     }
   }
@@ -37,11 +41,21 @@ export class Notified {
   }
 
   public isFirst(): boolean {
-    return !fs.existsSync(this.path)
+    return this.isFirstRun
   }
 
   public load(): void {
-    this.notified = JSON.parse(fs.readFileSync(this.path, 'utf8'))
+    const data: unknown = JSON.parse(fs.readFileSync(this.path, 'utf8'))
+    // 型検証: 文字列の配列であることを確認
+    if (
+      !Array.isArray(data) ||
+      !data.every((item) => typeof item === 'string')
+    ) {
+      throw new Error(
+        'notified.json の形式が不正です: 文字列の配列である必要があります'
+      )
+    }
+    this.notified = data
   }
 
   public save(): void {
