@@ -17,6 +17,10 @@ export class Notified {
   }
 
   public add(id: string): void {
+    // 重複チェック: 既に通知済みの場合は追加しない
+    if (this.notified.includes(id)) {
+      return
+    }
     this.notified.push(id)
     this.save()
   }
