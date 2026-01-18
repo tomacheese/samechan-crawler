@@ -247,14 +247,14 @@ async function withRetry<T>(
     operationName = 'operation',
   } = options
 
+  let lastError: unknown
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       return await fn()
     } catch (error: unknown) {
-      const isLastAttempt = attempt >= maxRetries
-
-      if (isLastAttempt) {
-        throw error
+      lastError = error
+      if (attempt >= maxRetries) {
+        break
       }
 
       const delay = Math.min(baseDelayMs * Math.pow(2, attempt - 1), maxDelayMs)
@@ -265,9 +265,7 @@ async function withRetry<T>(
     }
   }
 
-  throw new Error(
-    `${operationName} が ${maxRetries} 回のリトライ後に失敗しました`
-  )
+  throw lastError
 }
 
 // --- ログイン処理（503 エラー対策） ---
