@@ -41,7 +41,16 @@ export class Notified {
   }
 
   public load(): void {
-    this.notified = JSON.parse(fs.readFileSync(this.path, 'utf8'))
+    const data: unknown = JSON.parse(fs.readFileSync(this.path, 'utf8'))
+    if (
+      !Array.isArray(data) ||
+      !data.every((item) => typeof item === 'string')
+    ) {
+      throw new Error(
+        `Invalid notified file format: expected string[], got ${typeof data}`
+      )
+    }
+    this.notified = data
   }
 
   public save(): void {
