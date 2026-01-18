@@ -16,12 +16,23 @@ export class Notified {
     return this.notified.includes(id)
   }
 
-  public add(id: string): void {
-    // 重複チェック: 既に通知済みの場合は追加しない
-    if (this.notified.includes(id)) {
-      return
+  /**
+   * 通知済み ID を追加する（保存なし）
+   * バッチ処理用。複数件を追加した後、明示的に save() を呼ぶこと。
+   * @param id ツイート ID
+   */
+  public addWithoutSave(id: string): void {
+    if (!this.notified.includes(id)) {
+      this.notified.push(id)
     }
-    this.notified.push(id)
+  }
+
+  /**
+   * 通知済み ID を追加し、即座に保存する
+   * @param id ツイート ID
+   */
+  public add(id: string): void {
+    this.addWithoutSave(id)
     this.save()
   }
 
