@@ -39,6 +39,14 @@ export class SamechanCrawlerConfiguration extends ConfigFramework<Config> {
         typeof config.discord.channelId === 'string' ||
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         config.discord.channelId === undefined,
+      // webhookUrl または (token と channelId) のどちらかが必須
+      'discord has webhookUrl or (token and channelId)': (config) =>
+        (typeof config.discord.webhookUrl === 'string' &&
+          config.discord.webhookUrl.length > 0) ||
+        (typeof config.discord.token === 'string' &&
+          config.discord.token.length > 0 &&
+          typeof config.discord.channelId === 'string' &&
+          config.discord.channelId.length > 0),
     }
   }
 }
