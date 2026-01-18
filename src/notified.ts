@@ -47,7 +47,7 @@ export class Notified {
       !data.every((item) => typeof item === 'string')
     ) {
       throw new Error(
-        'notified.json の形式が不正です: 文字列の配列である必要があります'
+        `${this.path} の形式が不正です: 文字列の配列である必要があります`
       )
     }
     this.notified = data
