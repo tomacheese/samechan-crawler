@@ -444,9 +444,10 @@ async function main() {
         const tweet = tweetResult.tweet
         const idStr = tweet.legacy?.idStr ?? tweet.restId
         if (idStr) {
-          notified.add(idStr)
+          notified.addWithoutSave(idStr)
         }
       }
+      notified.save()
       return
     }
 
