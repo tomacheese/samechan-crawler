@@ -210,7 +210,11 @@ function loadCachedCookies(): CachedCookies | null {
       console.warn(
         '⚠️ Cookie キャッシュの構造が不正です。キャッシュを削除します'
       )
-      fs.unlinkSync(COOKIE_CACHE_FILE)
+      try {
+        fs.unlinkSync(COOKIE_CACHE_FILE)
+      } catch {
+        // 削除に失敗しても続行
+      }
       return null
     }
     const expiryMs = COOKIE_EXPIRY_DAYS * 24 * 60 * 60 * 1000
