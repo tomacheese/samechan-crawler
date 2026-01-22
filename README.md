@@ -10,7 +10,7 @@
 
 ## 必要要件
 
-- Node.js（`.node-version` 参照）
+- Node.js （`.node-version` 参照）
 - Yarn
 
 ## インストール
@@ -30,16 +30,28 @@ yarn install
 
 ```json
 {
+  "twitter": {
+    "username": "your-twitter-username",
+    "password": "your-twitter-password",
+    "otpSecret": "your-otp-secret",
+    "emailAddress": "your-email-address"
+  },
   "discord": {
     "webhookUrl": "https://discord.com/api/webhooks/..."
   }
 }
 ```
 
+`twitter.otpSecret` と `twitter.emailAddress` はオプションです。
+
 または Bot Token を使用する場合:
 
 ```json
 {
+  "twitter": {
+    "username": "your-twitter-username",
+    "password": "your-twitter-password"
+  },
   "discord": {
     "token": "your-bot-token",
     "channelId": "channel-id"
