@@ -195,6 +195,11 @@ function isValidCachedCookies(data: unknown): data is CachedCookies {
   )
 }
 
+/**
+ * キャッシュされた Cookie を読み込む
+ *
+ * @returns キャッシュされた Cookie、存在しない・無効・期限切れの場合は null
+ */
 function loadCachedCookies(): CachedCookies | null {
   try {
     if (!fs.existsSync(COOKIE_CACHE_FILE)) {
@@ -202,7 +207,10 @@ function loadCachedCookies(): CachedCookies | null {
     }
     const data: unknown = JSON.parse(fs.readFileSync(COOKIE_CACHE_FILE, 'utf8'))
     if (!isValidCachedCookies(data)) {
-      console.warn('⚠️ Cookie キャッシュの構造が不正です')
+      console.warn(
+        '⚠️ Cookie キャッシュの構造が不正です。キャッシュを削除します'
+      )
+      fs.unlinkSync(COOKIE_CACHE_FILE)
       return null
     }
     const expiryMs = COOKIE_EXPIRY_DAYS * 24 * 60 * 60 * 1000
@@ -212,7 +220,15 @@ function loadCachedCookies(): CachedCookies | null {
     }
     return data
   } catch (error) {
-    console.warn('⚠️ キャッシュされた Cookie の読み込みに失敗しました', error)
+    console.warn(
+      '⚠️ キャッシュされた Cookie の読み込みに失敗しました。キャッシュを削除します',
+      error
+    )
+    try {
+      fs.unlinkSync(COOKIE_CACHE_FILE)
+    } catch {
+      // 削除に失敗しても続行
+    }
     return null
   }
 }
