@@ -93,4 +93,9 @@ yarn install
 6. PR 本文の崩れがないことを確認する。
 
 ## リポジトリ固有
-- 目的: 💭 Twitter アカウント「[SameGauu](https://twitter.com/SameGauu)」のツイートを取得し、Discord に投稿するクローラーです。
+- 概要: Retrieve tweets from the "SameGauu" Twitter account and post them on Discord.
+- 主要言語: TypeScript
+- パッケージマネージャー: yarn
+- 主なエントリポイント: `src/main.ts`
+- CI 定義: `.github/workflows/` を参照
+- 実行環境: `Dockerfile` を使用
