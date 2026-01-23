@@ -25,3 +25,4 @@
 - ログに機密情報を出力しない。
 
 ## リポジトリ固有
+- 目的: 💭 Twitter アカウント「[SameGauu](https://twitter.com/SameGauu)」のツイートを取得し、Discord に投稿するクローラーです。

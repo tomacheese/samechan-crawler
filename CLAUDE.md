@@ -93,3 +93,4 @@ yarn install
 6. PR 本文の崩れがないことを確認する。
 
 ## リポジトリ固有
+- 目的: 💭 Twitter アカウント「[SameGauu](https://twitter.com/SameGauu)」のツイートを取得し、Discord に投稿するクローラーです。

@@ -36,3 +36,4 @@ yarn install
 - 既存のプロジェクトルールがある場合はそれを優先する。
 
 ## リポジトリ固有
+- 目的: 💭 Twitter アカウント「[SameGauu](https://twitter.com/SameGauu)」のツイートを取得し、Discord に投稿するクローラーです。
