@@ -2,8 +2,7 @@
 
 ## プロジェクト概要
 
-samechan-crawler は、Twitter をクロールして Discord に通知を送信する Node.js / TypeScript
-アプリケーションです。
+samechan-crawler は、Twitter をクロールして Discord に通知を送信する Node.js / TypeScript アプリケーションです。
 
 ## 必須要件
 
@@ -21,7 +20,7 @@ samechan-crawler は、Twitter をクロールして Discord に通知を送信�
 
 コミットメッセージと PR タイトルは以下の形式に従ってください：
 
-```text
+```
 <type>[optional scope]: <description>
 
 [optional body]
@@ -41,7 +40,7 @@ samechan-crawler は、Twitter をクロールして Discord に通知を送信�
 
 #### 記述例
 
-```text
+```
 feat(crawler): Twitter API v2 対応を追加
 
 詳細な変更内容の説明をここに記述します。
@@ -52,7 +51,7 @@ Fixes #123
 
 ## プロジェクト構造
 
-```text
+```
 .
 ├── .github/
 │   └── workflows/          # GitHub Actions ワークフロー
@@ -78,19 +77,13 @@ Fixes #123
 
 ```bash
 # 依存関係のインストール
-yarn install
+npm install
 
-# 開発サーバーの起動
-yarn dev
+# 開発
+npm run dev
 
-# ビルド
-yarn compile
-
-# リント実行
-yarn lint
-
-# フォーマット修正
-yarn fix
+# Lint
+npm run lint
 ```
 
 ## コーディング規約
