@@ -28,7 +28,7 @@
     "twitter-openapi-typescript": "0.0.55"
   },
   "devDependencies": {
-    "@book000/eslint-config": "1.13.2",
+    "@book000/eslint-config": "1.13.3",
     "@types/node": "24.10.9",
     "@types/tough-cookie": "4.0.5",
     "@vercel/ncc": "0.38.4",
