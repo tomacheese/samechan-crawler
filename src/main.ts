@@ -223,10 +223,10 @@ function loadCachedCookies(): CachedCookies | null {
       return null
     }
     return data
-  } catch (error) {
+  } catch (err) {
     console.warn(
       '⚠️ キャッシュされた Cookie の読み込みに失敗しました。キャッシュを削除します',
-      error
+      err
     )
     try {
       fs.unlinkSync(COOKIE_CACHE_FILE)
@@ -271,8 +271,8 @@ async function withRetry<T>(
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       return await fn()
-    } catch (error: unknown) {
-      lastError = error
+    } catch (err: unknown) {
+      lastError = err
       if (attempt >= maxRetries) {
         break
       }
@@ -302,18 +302,18 @@ async function loginWithRetry(
       console.log(`🔐 ログイン試行中 (${attempt}/${maxRetries} 回目)...`)
       await scraper.login(username, password, email, twoFactorSecret)
       return
-    } catch (error: unknown) {
+    } catch (err: unknown) {
       const is503 =
-        error instanceof Error &&
-        (error.message.includes('503') ||
-          error.message.includes('Service Unavailable'))
+        err instanceof Error &&
+        (err.message.includes('503') ||
+          err.message.includes('Service Unavailable'))
 
       if (is503 && attempt < maxRetries) {
         const delay = Math.min(1000 * Math.pow(2, attempt - 1), 30_000)
         console.warn(`⚠️ 503 エラー、${delay / 1000} 秒後にリトライします...`)
         await new Promise((resolve) => setTimeout(resolve, delay))
       } else {
-        throw error
+        throw err
       }
     }
   }
@@ -565,8 +565,8 @@ async function main() {
       // wait 1 second (Discord API rate limit)
       await new Promise((resolve) => setTimeout(resolve, 1000))
     }
-  } catch (error) {
-    logger.error("❌ Error: Couldn't fetch tweets", error as Error)
+  } catch (err) {
+    logger.error("❌ Error: Couldn't fetch tweets", err as Error)
   }
 }
 
@@ -578,20 +578,20 @@ async function cleanup(): Promise<void> {
     try {
       const instance = await cycleTLSInstancePromise
       await instance.exit()
-    } catch (error) {
+    } catch (err) {
       // インスタンスの終了に失敗しても致命的ではないため、警告ログのみ出力する
       const message =
-        error instanceof Error ? error.message : 'Unknown error occurred'
+        err instanceof Error ? err.message : 'Unknown error occurred'
       logger.warn(`CycleTLS インスタンスの終了に失敗しました: ${message}`)
     }
   }
   // twitter-scraper の内部 CycleTLS インスタンスも終了
   try {
     cycleTLSExit()
-  } catch (error) {
+  } catch (err) {
     // 初期化されていない可能性が高いため、デバッグログとして記録する
     const message =
-      error instanceof Error ? error.message : 'Unknown error occurred'
+      err instanceof Error ? err.message : 'Unknown error occurred'
     logger.debug(
       `twitter-scraper の内部 CycleTLS インスタンス終了処理でエラーが発生しました（未初期化の可能性）: ${message}`
     )
@@ -603,8 +603,8 @@ async function cleanup(): Promise<void> {
   let exitCode = 0
   try {
     await main()
-  } catch (error) {
-    Logger.configure('main').error('❌ Fatal error occurred', error as Error)
+  } catch (err) {
+    Logger.configure('main').error('❌ Fatal error occurred', err as Error)
     exitCode = 1
   } finally {
     await cleanup()
