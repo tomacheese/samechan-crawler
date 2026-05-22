@@ -5,6 +5,7 @@
     "moduleResolution": "Bundler",
     "lib": ["ESNext", "esnext.AsyncIterable", "DOM"],
     "outDir": "./dist",
+    "rootDir": "./src",
     "removeComments": true,
     "esModuleInterop": true,
     "allowJs": true,
@@ -22,6 +23,7 @@
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "newLine": "LF"
   },
   "include": ["src/**/*"]
