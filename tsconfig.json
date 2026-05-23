@@ -5,6 +5,8 @@
     "moduleResolution": "Bundler",
     "lib": ["ESNext", "esnext.AsyncIterable", "DOM"],
     "outDir": "./dist",
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "removeComments": true,
     "esModuleInterop": true,
     "allowJs": true,
@@ -21,7 +23,6 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
-    "baseUrl": ".",
     "newLine": "LF"
   },
   "include": ["src/**/*"]
