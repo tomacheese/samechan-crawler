@@ -486,7 +486,7 @@ async function main() {
 
       const fullText = legacy?.fullText ?? ''
       const screenName = user.legacy.screenName
-      const userName = user.legacy.name
+      const username = user.legacy.name
       const createdAt = legacy?.createdAt ?? ''
       const idStr = legacy?.idStr ?? tweet.restId
 
@@ -512,7 +512,7 @@ async function main() {
           {
             description: fullText,
             author: {
-              name: userName,
+              name: username,
               url: `https://twitter.com/${screenName}`,
               icon_url: profileImageUrl,
             },
