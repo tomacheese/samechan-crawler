@@ -49,22 +49,22 @@
 ## 開発コマンド
 ```bash
 # 依存関係のインストール
-yarn install
+pnpm install
 
 # 実行
-yarn start
+pnpm start
 
 # 開発（ウォッチモード）
-yarn dev
+pnpm dev
 
 # リンターの実行
-yarn lint
+pnpm lint
 
 # リンターによる自動修正
-yarn fix
+pnpm fix
 
 # ビルド（コンパイルとパッケージング）
-yarn package
+pnpm package
 ```
 
 ## アーキテクチャと主要ファイル
@@ -82,7 +82,7 @@ yarn package
 
 ## ドキュメント更新ルール
 - 設定項目の追加・変更時は `README.md` の設定セクションを更新する。
-- 依存関係の変更時は `package.json` を更新し、`yarn.lock` を確実に更新する。
+- 依存関係の変更時は `package.json` を更新し、`pnpm-lock.yaml` を確実に更新する。
 
 ## 作業チェックリスト
 
@@ -91,12 +91,12 @@ yarn package
 2. 作業を行うブランチが適切であること。
 3. 最新のリモートブランチに基づいた新規ブランチであること。
 4. PR がクローズされ、不要となったブランチは削除されていること。
-5. `yarn install` により依存パッケージをインストールしたこと。
+5. `pnpm install` により依存パッケージをインストールしたこと。
 
 ### コミット・プッシュ前
 1. コミットメッセージが Conventional Commits に従っていること。
 2. コミット内容にセンシティブな情報が含まれていないこと。
-3. Lint / Format エラーが発生しないこと（`yarn lint`）。
+3. Lint / Format エラーが発生しないこと（`pnpm lint`）。
 4. 動作確認を行い、期待通り動作すること。
 
 ### プルリクエストを作成前

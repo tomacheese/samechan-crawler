@@ -14,7 +14,7 @@
 ## 技術スタック
 - 言語: TypeScript
 - 実行環境: Node.js
-- パッケージマネージャー: yarn
+- パッケージマネージャー: pnpm
 - 主要ライブラリ:
   - `@the-convocation/twitter-scraper`: Twitter データの取得
   - `cycletls`: HTTP クライアント（JA3 フィンガープリント対応）
@@ -30,22 +30,22 @@
 ## 開発コマンド
 ```bash
 # 依存関係のインストール
-yarn install
+pnpm install
 
 # 実行
-yarn start
+pnpm start
 
 # 開発（ウォッチモード）
-yarn dev
+pnpm dev
 
 # リンターの実行
-yarn lint
+pnpm lint
 
 # リンターによる自動修正
-yarn fix
+pnpm fix
 
 # ビルド（コンパイルとパッケージング）
-yarn package
+pnpm package
 ```
 
 ## テスト方針
