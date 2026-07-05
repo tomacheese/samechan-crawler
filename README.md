@@ -11,7 +11,7 @@
 ## 必要要件
 
 - Node.js （`.node-version` 参照）
-- Yarn
+- pnpm
 
 ## インストール
 
@@ -21,7 +21,7 @@ git clone https://github.com/tomacheese/samechan-crawler.git
 cd samechan-crawler
 
 # 依存関係のインストール
-yarn install
+pnpm install
 ```
 
 ## 設定
@@ -63,10 +63,10 @@ yarn install
 
 ```bash
 # 実行
-yarn start
+pnpm start
 
 # 開発モード（ファイル変更を監視）
-yarn dev
+pnpm dev
 ```
 
 ## Docker での実行
