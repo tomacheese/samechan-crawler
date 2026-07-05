@@ -2,7 +2,7 @@
 
 while :
 do
-  yarn start
+  pnpm start
 
   # wait 10 minutes before restarting
   echo "Waiting 10 minutes before restarting..."

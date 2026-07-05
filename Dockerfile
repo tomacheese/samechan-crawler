@@ -1,19 +1,23 @@
 FROM node:24-slim AS runner
 
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME/bin:$PATH"
+
 RUN apt-get update && \
   apt-get install -y --no-install-recommends tzdata ca-certificates && \
   apt-get clean && \
-  rm -rf /var/lib/apt/lists/*
+  rm -rf /var/lib/apt/lists/* && \
+  npm install -g corepack@latest && \
+  corepack enable
 
 ENV TZ=Asia/Tokyo
 
 WORKDIR /app
 
-COPY package.json yarn.lock ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-RUN corepack enable && \
-  yarn install --frozen-lockfile && \
-  yarn cache clean
+RUN pnpm install --frozen-lockfile && \
+  pnpm store prune
 
 COPY src/ src/
 COPY tsconfig.json .
