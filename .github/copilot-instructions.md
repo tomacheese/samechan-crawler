@@ -1,64 +1,30 @@
 # GitHub Copilot Instructions
 
-## プロジェクト概要
-- 目的: Twitter アカウント「SameGauu」のツイートを取得し、Discord に投稿する
-- 主な機能: 指定した Twitter アカウントのツイートを定期的に取得、新しいツイートを Discord に通知、重複通知防止
-- 対象ユーザー: 開発者、運用者
+GitHub Copilot のコードレビュー向けの指針。レビュー時に重点確認すべき点と、フラグすべきでない既知パターンをまとめる。
 
-## 共通ルール
-- 会話は日本語で行う。
-- PR とコミットは [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従う。
-  - `<type>(<scope>): <description>` 形式で、`<description>` は日本語で記載する。
+## プロジェクト概要（レビュー時の前提）
+
+Twitter アカウント「SameGauu」のツイートを取得し、Discord に通知するクローラー。TypeScript / Node.js / pnpm 構成で、自動テストは未導入。
+
+## レビューで重点的に確認する点
+
+- **機密情報の漏洩**: `data/config.json` には Twitter 認証情報や Discord の Webhook URL / Bot Token が含まれる。これらの値や新たな秘密情報がコード・ログ出力・コミットに混入していないか。
+- **型安全性**: `skipLibCheck` の有効化や `any` による型チェック回避が持ち込まれていないか。
+- **エラーハンドリング**: スクレイピングや Discord 通知の失敗を握りつぶしていないか。エラーメッセージは英語か。
+- **重複通知の防止**: 通知済み管理（`data/notified.json` / `Notified` クラス）を迂回する変更になっていないか。
+- **docstring**: 追加・変更された関数やインターフェースに日本語の JSDoc があるか。
+
+## 規約（lint / formatter で強制）
+
+- ESLint（`@book000/eslint-config`）と Prettier に従う。`pnpm lint` で prettier / eslint / tsc が実行される。
 - 日本語と英数字の間には半角スペースを入れる。
+- PR とコミットは [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) に従い、`<description>` は日本語で記載する。
 
-## 技術スタック
-- 言語: TypeScript
-- 実行環境: Node.js
-- パッケージマネージャー: pnpm
-- 主要ライブラリ:
-  - `@the-convocation/twitter-scraper`: Twitter データの取得
-  - `cycletls`: HTTP クライアント（JA3 フィンガープリント対応）
-  - `twitter-openapi-typescript`: Twitter API クライアント
-  - `@book000/node-utils`: 設定管理、Discord 通知、ロガー
+## フラグすべきでない既知パターン
 
-## コーディング規約
-- TypeScript の `skipLibCheck` を有効にして型チェックを回避しないこと。
-- 関数やインターフェースには docstring (JSDoc) を日本語で記載すること。
-- エラーメッセージは英語で記載すること。
-- 既存のコードスタイル（ESLint, Prettier）に従うこと。
-
-## 開発コマンド
-```bash
-# 依存関係のインストール
-pnpm install
-
-# 実行
-pnpm start
-
-# 開発（ウォッチモード）
-pnpm dev
-
-# リンターの実行
-pnpm lint
-
-# リンターによる自動修正
-pnpm fix
-
-# ビルド（コンパイルとパッケージング）
-pnpm package
-```
+- `cycletls` による JA3 フィンガープリント偽装や独自の HTTP ヘッダー設定は本プロジェクトの仕様であり、脆弱性ではない。
+- プロキシ設定（`PROXY_SERVER`, `PROXY_USERNAME`, `PROXY_PASSWORD`）を環境変数から読み込むのは意図的な設計。
 
 ## テスト方針
-- 現時点では自動テストは導入されていない。
-- 新規機能追加時は、可能な限りモジュール化し、テストの書きやすさを考慮すること。
 
-## セキュリティ / 機密情報
-- `data/config.json` には Twitter の認証情報や Discord の Webhook URL が含まれるため、Git にコミットしないこと。
-- ログに機密情報（パスワード、トークン、Cookie など）を出力しないこと。
-
-## ドキュメント更新
-- 機能変更や設定項目の追加時は `README.md` を更新すること。
-
-## リポジトリ固有
-- Twitter のスクレイピングには `cycletls` を使用しており、プロキシ設定（`PROXY_SERVER`, `PROXY_USERNAME`, `PROXY_PASSWORD`）を環境変数でサポートしている。
-- 通知済みツイートは `data/notified.json` に保存される。
+自動テストは未導入。テストが存在しないこと自体を PR ごとに指摘する必要はないが、テスト容易性を著しく損なう設計は指摘してよい。

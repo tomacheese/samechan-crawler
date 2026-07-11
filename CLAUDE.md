@@ -41,11 +41,6 @@
 - TypeScript プロジェクトにおいて、`skipLibCheck` を有効にして型チェックを回避することは絶対にしてはならない。
 - 関数やインターフェースには、docstring (JSDoc) を日本語で記載すること。
 
-## 相談ルール
-- 実装レビュー、局所設計、整合性確認については Codex CLI (Serena) に相談すること。
-- 外部仕様、最新情報の確認については Gemini CLI に相談すること。
-- 指摘を受けた場合は真摯に対応し、黙殺しないこと。
-
 ## 開発コマンド
 ```bash
 # 依存関係のインストール
@@ -108,8 +103,12 @@ pnpm package
 1. コンフリクトが発生していないこと。
 2. PR 本文が最新の状態のみを日本語で詳しく記載されていること。
 3. GitHub Actions CI の結果を確認すること。
-4. GitHub Copilot レビュー、Codex レビューへの対応を行うこと。
+4. GitHub Copilot レビューへの対応を行うこと。
 
 ## リポジトリ固有
 - `cycletls` を使用しており、HTTP リクエストの際に JA3 フィンガープリントを偽装している。
-- プロキシ設定は環境変数から読み込まれる。
+- プロキシ設定は環境変数（`PROXY_SERVER`, `PROXY_USERNAME`, `PROXY_PASSWORD`）から読み込まれる。
+
+## セキュリティ / 機密情報
+- `data/config.json` には Twitter の認証情報や Discord の Webhook URL / Bot Token が含まれるため、Git にコミットしないこと。
+- ログにパスワード、トークン、Cookie などの機密情報を出力しないこと。
