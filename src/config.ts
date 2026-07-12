@@ -14,7 +14,7 @@ interface Config {
   }
 }
 
-export class SamechanCrawlerConfiguration extends ConfigFramework<Config> {
+export class SamechanCrawlerConfig extends ConfigFramework<Config> {
   protected validates(): Record<string, (config: Config) => boolean> {
     return {
       'twitter is required': (config) => !!config.twitter,

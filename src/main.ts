@@ -6,16 +6,19 @@ import initCycleTLS, { CycleTLSClient } from 'cycletls'
 import { Headers } from 'headers-polyfill'
 import { TwitterOpenApi } from 'twitter-openapi-typescript'
 import { Notified } from './notified'
-import { SamechanCrawlerConfiguration } from './config'
+import { SamechanCrawlerConfig } from './config'
 import { Discord, Logger } from '@book000/node-utils'
 
 // --- CycleTLS インスタンス管理 ---
 // Promise ベースのシングルトンパターンで並行初期化を防止
-let cycleTLSInstancePromise: Promise<CycleTLSClient> | null = null
+// トップレベル変数への関数内代入を避けるため、状態をオブジェクトのプロパティに保持する
+const cycleTLSState: { instancePromise: Promise<CycleTLSClient> | null } = {
+  instancePromise: null,
+}
 
 async function initCycleTLSWithProxy(): Promise<CycleTLSClient> {
-  cycleTLSInstancePromise ??= initCycleTLS()
-  return cycleTLSInstancePromise
+  cycleTLSState.instancePromise ??= initCycleTLS()
+  return cycleTLSState.instancePromise
 }
 
 // --- カスタム fetch 関数 ---
@@ -40,7 +43,7 @@ async function cycleTLSFetchWithProxy(
     typeof input === 'string'
       ? input
       : input instanceof URL
-        ? input.toString()
+        ? input.href
         : input.url
 
   const method = (init?.method ?? 'GET').toUpperCase()
@@ -59,7 +62,7 @@ async function cycleTLSFetchWithProxy(
       for (const [key, value] of init.headers) {
         headers[key] = value
       }
-    } else if (h[Symbol.iterator] && typeof h[Symbol.iterator] === 'function') {
+    } else if (typeof h[Symbol.iterator] === 'function') {
       // イテラブル
       for (const [key, value] of init.headers as unknown as Iterable<
         [string, string]
@@ -101,7 +104,7 @@ async function cycleTLSFetchWithProxy(
         const proxyUrl = new URL(normalizedProxyServer)
         proxyUrl.username = proxyUsername
         proxyUrl.password = proxyPassword
-        proxy = proxyUrl.toString()
+        proxy = proxyUrl.href
       } catch {
         throw new Error(
           `Invalid PROXY_SERVER URL: ${proxyServer}. Expected format: host:port, http://host:port or https://host:port`
@@ -187,11 +190,11 @@ function isValidCachedCookies(data: unknown): data is CachedCookies {
   if (typeof data !== 'object' || data === null) {
     return false
   }
-  const obj = data as Record<string, unknown>
+  const object = data as Record<string, unknown>
   return (
-    typeof obj.auth_token === 'string' &&
-    typeof obj.ct0 === 'string' &&
-    typeof obj.savedAt === 'number'
+    typeof object.auth_token === 'string' &&
+    typeof object.ct0 === 'string' &&
+    typeof object.savedAt === 'number'
   )
 }
 
@@ -238,9 +241,9 @@ function loadCachedCookies(): CachedCookies | null {
 }
 
 function saveCookies(authToken: string, ct0: string): void {
-  const dir = path.dirname(COOKIE_CACHE_FILE)
-  if (dir && dir !== '.' && !fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true })
+  const directory = path.dirname(COOKIE_CACHE_FILE)
+  if (directory && directory !== '.' && !fs.existsSync(directory)) {
+    fs.mkdirSync(directory, { recursive: true })
   }
   const data: CachedCookies = {
     auth_token: authToken,
@@ -252,7 +255,7 @@ function saveCookies(authToken: string, ct0: string): void {
 
 // --- リトライ機能 ---
 async function withRetry<T>(
-  fn: () => Promise<T>,
+  function_: () => Promise<T>,
   options: {
     maxRetries?: number
     baseDelayMs?: number
@@ -270,7 +273,7 @@ async function withRetry<T>(
   let lastError: unknown
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      return await fn()
+      return await function_()
     } catch (error: unknown) {
       lastError = error
       if (attempt >= maxRetries) {
@@ -321,7 +324,7 @@ async function loginWithRetry(
 
 // --- 認証 Cookie の取得 ---
 async function getAuthCookies(
-  config: SamechanCrawlerConfiguration
+  config: SamechanCrawlerConfig
 ): Promise<{ authToken: string; ct0: string }> {
   // キャッシュされた Cookie があれば使用
   const cached = loadCachedCookies()
@@ -377,7 +380,7 @@ async function main() {
   const logger = Logger.configure('main')
   logger.info('✨ main()')
 
-  const config = new SamechanCrawlerConfiguration('./data/config.json')
+  const config = new SamechanCrawlerConfig('./data/config.json')
   config.load()
   if (!config.validate()) {
     logger.error('❌ Config is invalid')
@@ -457,14 +460,14 @@ async function main() {
     const notified = new Notified(
       process.env.NOTIFIED_PATH ?? './data/notified.json'
     )
-    const initializeMode = notified.isFirst()
-    if (initializeMode) {
+    const isInitializeMode = notified.isFirst()
+    if (isInitializeMode) {
       logger.info('💾 Initialize mode. Save all tweets to file')
       for (const tweetResult of tweets) {
         const tweet = tweetResult.tweet
-        const idStr = tweet.legacy?.idStr ?? tweet.restId
-        if (idStr) {
-          notified.addWithoutSave(idStr)
+        const idString = tweet.legacy?.idStr ?? tweet.restId
+        if (idString) {
+          notified.addWithoutSave(idString)
         }
       }
       notified.save()
@@ -473,9 +476,9 @@ async function main() {
 
     const notifyTweets = tweets.filter((tweetResult) => {
       const tweet = tweetResult.tweet
-      const idStr = tweet.legacy?.idStr ?? tweet.restId
+      const idString = tweet.legacy?.idStr ?? tweet.restId
       const fullText = tweet.legacy?.fullText ?? ''
-      return idStr && !notified.isNotified(idStr) && fullText
+      return idString && !notified.isNotified(idString) && fullText
     })
     logger.info(`🔔 Notify ${notifyTweets.length} tweets`)
 
@@ -488,13 +491,13 @@ async function main() {
       const screenName = user.legacy.screenName
       const username = user.legacy.name
       const createdAt = legacy?.createdAt ?? ''
-      const idStr = legacy?.idStr ?? tweet.restId
+      const idString = legacy?.idStr ?? tweet.restId
 
-      if (!idStr) {
+      if (!idString) {
         continue
       }
 
-      logger.info(`✅ New tweet: ${idStr}`)
+      logger.info(`✅ New tweet: ${idString}`)
 
       // メディア URL の取得
       let imageUrl: string | undefined
@@ -538,7 +541,7 @@ async function main() {
                 emoji: {
                   name: '🔗',
                 },
-                url: `https://twitter.com/${screenName}/status/${idStr}`,
+                url: `https://twitter.com/${screenName}/status/${idString}`,
               },
               {
                 type: 2,
@@ -546,7 +549,7 @@ async function main() {
                 emoji: {
                   name: '🔁',
                 },
-                url: `https://twitter.com/intent/retweet?tweet_id=${idStr}`,
+                url: `https://twitter.com/intent/retweet?tweet_id=${idString}`,
               },
               {
                 type: 2,
@@ -554,13 +557,13 @@ async function main() {
                 emoji: {
                   name: '❤️',
                 },
-                url: `https://twitter.com/intent/like?tweet_id=${idStr}`,
+                url: `https://twitter.com/intent/like?tweet_id=${idString}`,
               },
             ],
           },
         ],
       })
-      notified.add(idStr)
+      notified.add(idString)
 
       // wait 1 second (Discord API rate limit)
       await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -574,9 +577,9 @@ async function main() {
 async function cleanup(): Promise<void> {
   const logger = Logger.configure('cleanup')
   // CycleTLS インスタンスのクリーンアップ（初期化されている場合のみ）
-  if (cycleTLSInstancePromise) {
+  if (cycleTLSState.instancePromise) {
     try {
-      const instance = await cycleTLSInstancePromise
+      const instance = await cycleTLSState.instancePromise
       await instance.exit()
     } catch (error) {
       // インスタンスの終了に失敗しても致命的ではないため、警告ログのみ出力する

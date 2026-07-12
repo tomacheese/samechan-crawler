@@ -42,10 +42,7 @@ export class Notified {
 
   public load(): void {
     const data: unknown = JSON.parse(fs.readFileSync(this.path, 'utf8'))
-    if (
-      !Array.isArray(data) ||
-      !data.every((item) => typeof item === 'string')
-    ) {
+    if (!Array.isArray(data) || data.some((item) => typeof item !== 'string')) {
       throw new Error(
         `${this.path} の形式が不正です: 文字列の配列である必要があります`
       )
