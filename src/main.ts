@@ -485,8 +485,10 @@ async function main() {
       const legacy = tweet.legacy
 
       const fullText = legacy?.fullText ?? ''
-      const screenName = user.legacy.screenName
-      const username = user.legacy.name
+      // Twitter の GraphQL レスポンス仕様変更により、name / screenName は
+      // legacy から core に移動している。legacy 側は空になるため core を優先する
+      const screenName = user.core?.screenName ?? user.legacy.screenName
+      const username = user.core?.name ?? user.legacy.name
       const createdAt = legacy?.createdAt ?? ''
       const idStr = legacy?.idStr ?? tweet.restId
 
@@ -503,8 +505,9 @@ async function main() {
         imageUrl = extendedEntities.media[0]?.mediaUrlHttps ?? undefined
       }
 
-      // プロフィール画像 URL
-      const profileImageUrl = user.legacy.profileImageUrlHttps
+      // プロフィール画像 URL(こちらも同様に avatar に移動している)
+      const profileImageUrl =
+        user.avatar?.imageUrl ?? user.legacy.profileImageUrlHttps
 
       logger.info('📤 Sending to Discord...')
       await discord.sendMessage({
