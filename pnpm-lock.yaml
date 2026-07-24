@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@book000/node-utils':
-        specifier: 1.25.5
-        version: 1.25.5(@opentelemetry/core@2.9.0(@opentelemetry/api@1.9.1))
+        specifier: 1.25.6
+        version: 1.25.6(@opentelemetry/core@2.9.0(@opentelemetry/api@1.9.1))
       '@the-convocation/twitter-scraper':
         specifier: 0.22.3
         version: 0.22.3(cycletls@2.0.5)
@@ -85,8 +85,8 @@ packages:
     peerDependencies:
       eslint: 10.7.0
 
-  '@book000/node-utils@1.25.5':
-    resolution: {integrity: sha512-5IyAADrIjZAV5c0jKXbabEAy32Sys7kGUjK1fbJSPYkR3fJnp1KsqkNz8hemCQuBxtO2DnfIkvQM6bK9sRZ+aQ==}
+  '@book000/node-utils@1.25.6':
+    resolution: {integrity: sha512-yFYNQfOl+QLbGIXcrnPC3/GQK474/X0zohUI52bAsWSxUulBFzjcIdw3/5swgKQdD4BdJeyH97+2xPmo3kQKAA==}
 
   '@colors/colors@1.6.0':
     resolution: {integrity: sha512-Ir+AOibqzrIsL6ajt3Rz3LskB7OiMVHqltZmspbW/TJuTVuyOMirVqAkjfY6JISiLHgyNqicAC8AyHHGzNd/dA==}
@@ -2154,7 +2154,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@book000/node-utils@1.25.5(@opentelemetry/core@2.9.0(@opentelemetry/api@1.9.1))':
+  '@book000/node-utils@1.25.6(@opentelemetry/core@2.9.0(@opentelemetry/api@1.9.1))':
     dependencies:
       '@sentry/node': 10.67.0(@opentelemetry/core@2.9.0(@opentelemetry/api@1.9.1))
       cycle: 1.0.3
