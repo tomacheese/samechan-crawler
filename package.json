@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@book000/eslint-config": "1.16.63",
-    "@types/node": "24.13.3",
+    "@types/node": "24.13.4",
     "@types/tough-cookie": "4.0.5",
     "@vercel/ncc": "0.45.0",
     "eslint": "10.10.0",
