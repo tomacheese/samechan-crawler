@@ -27,7 +27,7 @@
     "@the-convocation/twitter-scraper": "0.22.3",
     "cycletls": "2.0.5",
     "headers-polyfill": "5.0.1",
-    "twitter-openapi-typescript": "0.0.56"
+    "twitter-openapi-typescript": "0.1.3"
   },
   "devDependencies": {
     "@book000/eslint-config": "1.16.93",
