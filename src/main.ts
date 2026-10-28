@@ -154,13 +154,13 @@ async function cycleTLSFetchWithProxy(
 
   // レスポンスボディを取得
   let responseBody: string
-  if (response.data !== undefined && response.data !== null) {
+  if (response.data === undefined || response.data === null) {
+    responseBody = ''
+  } else {
     responseBody =
       typeof response.data === 'string'
         ? response.data
         : JSON.stringify(response.data)
-  } else {
-    responseBody = ''
   }
 
   return new Response(responseBody, {
