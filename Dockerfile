@@ -1,4 +1,4 @@
-FROM node:24-slim AS runner
+FROM node:26-slim AS runner
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME/bin:$PATH"
