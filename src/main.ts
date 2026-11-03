@@ -13,12 +13,17 @@ import { Discord, Logger } from '@book000/node-utils'
 // Promise ベースのシングルトンパターンで並行初期化を防止
 let cycleTLSInstancePromise: Promise<CycleTLSClient> | null = null
 
+/**
+ * CycleTLS インスタンスを取得する
+ *
+ * 初回呼び出し時のみ初期化し、以降は同じインスタンスを返す。
+ * プロキシは初期化時ではなくリクエストごとに指定する。
+ */
 async function initCycleTLSWithProxy(): Promise<CycleTLSClient> {
   cycleTLSInstancePromise ??= initCycleTLS()
   return cycleTLSInstancePromise
 }
 
-// --- カスタム fetch 関数 ---
 /**
  * Headers ライクなオブジェクトのインターフェース
  * undici の _Headers クラスや標準の Headers クラスに対応
@@ -181,6 +186,11 @@ interface CachedCookies {
   savedAt: number
 }
 
+/**
+ * 値が Cookie キャッシュの形式であるかを判定する
+ *
+ * @param data 判定対象の値
+ */
 function isValidCachedCookies(data: unknown): data is CachedCookies {
   if (typeof data !== 'object' || data === null) {
     return false
@@ -235,6 +245,12 @@ function loadCachedCookies(): CachedCookies | null {
   }
 }
 
+/**
+ * 認証 Cookie をキャッシュファイルに保存する
+ *
+ * @param authToken auth_token の値
+ * @param ct0 ct0 の値
+ */
 function saveCookies(authToken: string, ct0: string): void {
   const dir = path.dirname(COOKIE_CACHE_FILE)
   if (dir && dir !== '.' && !fs.existsSync(dir)) {
@@ -249,6 +265,14 @@ function saveCookies(authToken: string, ct0: string): void {
 }
 
 // --- リトライ機能 ---
+/**
+ * 指数バックオフ付きで非同期処理をリトライする
+ *
+ * @param fn 実行する処理
+ * @param options リトライ設定。待機時間は指数バックオフで増加し、`maxDelayMs` が上限
+ * @returns `fn` の戻り値
+ * @throws 最大試行回数に達した場合は最後のエラー
+ */
 async function withRetry<T>(
   fn: () => Promise<T>,
   options: {
@@ -287,6 +311,16 @@ async function withRetry<T>(
 }
 
 // --- ログイン処理（503 エラー対策） ---
+/**
+ * Twitter にログインする。503 エラーの場合のみ指数バックオフでリトライする
+ *
+ * @param scraper ログインに使用する Scraper
+ * @param username ユーザー名
+ * @param password パスワード
+ * @param email メールアドレス (任意)
+ * @param twoFactorSecret 二要素認証の秘密鍵 (任意)
+ * @param maxRetries 最大試行回数
+ */
 async function loginWithRetry(
   scraper: Scraper,
   username: string,
@@ -318,6 +352,14 @@ async function loginWithRetry(
 }
 
 // --- 認証 Cookie の取得 ---
+/**
+ * 認証 Cookie を取得する
+ *
+ * 有効なキャッシュがあればそれを使用し、なければログインして取得したうえでキャッシュに保存する。
+ *
+ * @param config 設定
+ * @returns auth_token と ct0
+ */
 async function getAuthCookies(
   config: SamechanCrawlerConfiguration
 ): Promise<{ authToken: string; ct0: string }> {
@@ -371,6 +413,11 @@ async function getAuthCookies(
 }
 
 // --- メイン処理 ---
+/**
+ * ツイートを取得し、未通知のものを Discord に通知する
+ *
+ * 通知済みファイルが存在しない初回実行時は、通知せずに取得した全ツイートを通知済みとして保存する。
+ */
 async function main() {
   const logger = Logger.configure('main')
   logger.info('✨ main()')
@@ -413,7 +460,6 @@ async function main() {
     const targetScreenName = process.env.TARGET_TWITTER_USERNAME ?? 'SameGauu'
 
     logger.info('🔍 Fetching user info...')
-    // ユーザー情報取得
     const userResponse = await withRetry(
       () =>
         client
@@ -434,7 +480,6 @@ async function main() {
     const userId = userData.restId
 
     logger.info('🔍 Fetching tweets...')
-    // ユーザーのツイート取得
     const tweetsResponse = await withRetry(
       () =>
         client.getTweetApi().getUserTweets({
@@ -448,7 +493,6 @@ async function main() {
       }
     )
 
-    // 結果の処理
     const tweets = tweetsResponse.data.data
     logger.info(`🔍 Fetched ${tweets.length} tweets`)
 
@@ -496,14 +540,13 @@ async function main() {
 
       logger.info(`✅ New tweet: ${idStr}`)
 
-      // メディア URL の取得
       let imageUrl: string | undefined
       const extendedEntities = legacy?.extendedEntities
       if (extendedEntities?.media && extendedEntities.media.length > 0) {
         imageUrl = extendedEntities.media[0]?.mediaUrlHttps ?? undefined
       }
 
-      // プロフィール画像 URL(こちらも同様に avatar に移動している)
+      // プロフィール画像 URL も同様に avatar に移動している
       const profileImageUrl =
         user.avatar?.imageUrl ?? user.legacy?.profileImageUrlHttps
 
@@ -563,7 +606,7 @@ async function main() {
       })
       notified.add(idStr)
 
-      // wait 1 second (Discord API rate limit)
+      // Discord API のレート制限対策として待機する
       await new Promise((resolve) => setTimeout(resolve, 1000))
     }
   } catch (error) {
@@ -572,6 +615,9 @@ async function main() {
 }
 
 // --- クリーンアップ処理 ---
+/**
+ * CycleTLS インスタンスを終了する
+ */
 async function cleanup(): Promise<void> {
   const logger = Logger.configure('cleanup')
   // CycleTLS インスタンスのクリーンアップ（初期化されている場合のみ）
