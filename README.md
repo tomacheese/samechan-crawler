@@ -42,9 +42,7 @@ pnpm install
 }
 ```
 
-`twitter.otpSecret` と `twitter.emailAddress` はオプションです。
-
-または Bot Token を使用する場合:
+`twitter.otpSecret` と `twitter.emailAddress` は省略できます。`discord` には `webhookUrl`、または `token` と `channelId` の組のどちらかが必須です。Bot Token を使用する場合:
 
 ```json
 {
@@ -59,6 +57,22 @@ pnpm install
 }
 ```
 
+### 環境変数
+
+すべて省略できます。
+
+| 変数                               | 説明                                                               | 既定値                        |
+| ---------------------------------- | ------------------------------------------------------------------ | ----------------------------- |
+| `TARGET_TWITTER_USERNAME`          | 取得対象の Twitter ユーザー名                                      | `SameGauu`                    |
+| `CONFIG_PATH`                      | 設定ファイルのパス                                                 | `./data/config.json`          |
+| `NOTIFIED_PATH`                    | 通知済みツイート ID の保存先                                       | `./data/notified.json`        |
+| `COOKIE_CACHE_PATH`                | ログイン Cookie のキャッシュ先 (有効期限 7 日)                     | `./data/twitter-cookies.json` |
+| `LOG_DIR`                          | ログの出力先                                                       | `logs`                        |
+| `PROXY_SERVER`                     | プロキシのホスト、または URL (`host:port` / `http(s)://host:port`) | なし                          |
+| `PROXY_USERNAME`, `PROXY_PASSWORD` | プロキシの認証情報 (両方指定時のみ有効)                            | なし                          |
+
+初回実行時は、取得したツイートを通知せずに通知済みとして保存します。
+
 ## 使用方法
 
 ```bash
@@ -69,12 +83,16 @@ pnpm start
 pnpm dev
 ```
 
+1 回の実行でツイートを取得して通知し、終了します。
+
 ## Docker での実行
 
 ```bash
 docker compose up -d
 ```
 
+`./data` がコンテナの `/data` にマウントされます。`entrypoint.sh` が実行後 10 分待機して再実行を繰り返すため、定期実行されます。
+
 ## ライセンス
 
-このプロジェクトは [MIT](LICENSE) ライセンスの下で公開されています。
+このプロジェクトは MIT ライセンスの下で公開されています。

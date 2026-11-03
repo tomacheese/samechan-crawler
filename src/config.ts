@@ -1,5 +1,8 @@
 import { ConfigFramework } from '@book000/node-utils'
 
+/**
+ * `data/config.json` の構造
+ */
 interface Config {
   twitter: {
     username: string
@@ -14,6 +17,9 @@ interface Config {
   }
 }
 
+/**
+ * 設定ファイルの読み込みとバリデーションを行うクラス
+ */
 export class SamechanCrawlerConfiguration extends ConfigFramework<Config> {
   protected validates(): Record<string, (config: Config) => boolean> {
     return {
