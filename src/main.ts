@@ -526,6 +526,7 @@ async function main() {
     })
     logger.info(`🔔 Notify ${notifyTweets.length} tweets`)
 
+    const failedIds: string[] = []
     for (const tweetResult of notifyTweets.toReversed()) {
       const tweet = tweetResult.tweet
       const user = tweetResult.user
@@ -543,76 +544,87 @@ async function main() {
         continue
       }
 
-      logger.info(`✅ New tweet: ${idStr}`)
+      try {
+        logger.info(`✅ New tweet: ${idStr}`)
 
-      let imageUrl: string | undefined
-      const extendedEntities = legacy?.extendedEntities
-      if (extendedEntities?.media && extendedEntities.media.length > 0) {
-        imageUrl = extendedEntities.media[0]?.mediaUrlHttps ?? undefined
+        let imageUrl: string | undefined
+        const extendedEntities = legacy?.extendedEntities
+        if (extendedEntities?.media && extendedEntities.media.length > 0) {
+          imageUrl = extendedEntities.media[0]?.mediaUrlHttps ?? undefined
+        }
+
+        // プロフィール画像 URL も同様に avatar に移動している
+        const profileImageUrl =
+          user.avatar?.imageUrl ?? user.legacy?.profileImageUrlHttps
+
+        logger.info('📤 Sending to Discord...')
+        await discord.sendMessage({
+          embeds: [
+            {
+              description: fullText,
+              author: {
+                name: username,
+                url: `https://twitter.com/${screenName}`,
+                icon_url: profileImageUrl,
+              },
+              image: imageUrl ? { url: imageUrl } : undefined,
+              footer: {
+                text: 'Twitter',
+                icon_url:
+                  'https://abs.twimg.com/icons/apple-touch-icon-192x192.png',
+              },
+              timestamp: createdAt
+                ? new Date(createdAt).toISOString()
+                : undefined,
+              color: 0x1d_a1_f2,
+            },
+          ],
+          components: [
+            {
+              type: 1,
+              components: [
+                {
+                  type: 2,
+                  style: 5,
+                  emoji: {
+                    name: '🔗',
+                  },
+                  url: `https://twitter.com/${screenName}/status/${idStr}`,
+                },
+                {
+                  type: 2,
+                  style: 5,
+                  emoji: {
+                    name: '🔁',
+                  },
+                  url: `https://twitter.com/intent/retweet?tweet_id=${idStr}`,
+                },
+                {
+                  type: 2,
+                  style: 5,
+                  emoji: {
+                    name: '❤️',
+                  },
+                  url: `https://twitter.com/intent/like?tweet_id=${idStr}`,
+                },
+              ],
+            },
+          ],
+        })
+        notified.add(idStr)
+      } catch (error) {
+        logger.error(`❌ Failed to notify tweet ${idStr}`, error as Error)
+        failedIds.push(idStr)
       }
-
-      // プロフィール画像 URL も同様に avatar に移動している
-      const profileImageUrl =
-        user.avatar?.imageUrl ?? user.legacy?.profileImageUrlHttps
-
-      logger.info('📤 Sending to Discord...')
-      await discord.sendMessage({
-        embeds: [
-          {
-            description: fullText,
-            author: {
-              name: username,
-              url: `https://twitter.com/${screenName}`,
-              icon_url: profileImageUrl,
-            },
-            image: imageUrl ? { url: imageUrl } : undefined,
-            footer: {
-              text: 'Twitter',
-              icon_url:
-                'https://abs.twimg.com/icons/apple-touch-icon-192x192.png',
-            },
-            timestamp: createdAt
-              ? new Date(createdAt).toISOString()
-              : undefined,
-            color: 0x1d_a1_f2,
-          },
-        ],
-        components: [
-          {
-            type: 1,
-            components: [
-              {
-                type: 2,
-                style: 5,
-                emoji: {
-                  name: '🔗',
-                },
-                url: `https://twitter.com/${screenName}/status/${idStr}`,
-              },
-              {
-                type: 2,
-                style: 5,
-                emoji: {
-                  name: '🔁',
-                },
-                url: `https://twitter.com/intent/retweet?tweet_id=${idStr}`,
-              },
-              {
-                type: 2,
-                style: 5,
-                emoji: {
-                  name: '❤️',
-                },
-                url: `https://twitter.com/intent/like?tweet_id=${idStr}`,
-              },
-            ],
-          },
-        ],
-      })
-      notified.add(idStr)
 
       // Discord API のレート制限対策として待機する
       await new Promise((resolve) => setTimeout(resolve, 1000))
+    }
+
+    if (failedIds.length > 0) {
+      throw new Error(
+        `Failed to notify ${failedIds.length} tweet(s): ${failedIds.join(', ')}`
+      )
     }
   } catch (error) {
     logger.error('❌ Error: Failed to fetch or notify tweets', error as Error)
