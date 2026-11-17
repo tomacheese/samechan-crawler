@@ -435,6 +435,11 @@ async function main() {
   // Twitter API クライアントを初期化
   const { authToken, ct0 } = await getAuthCookies(config)
 
+  // fetchApi は static でインスタンス単位に渡せないため、プロキシ設定時のみ差し替える
+  if (process.env.PROXY_SERVER) {
+    TwitterOpenApi.fetchApi = cycleTLSFetchWithProxy
+  }
+
   const api = new TwitterOpenApi()
   const client = await api.getClientFromCookies({
     auth_token: authToken,
