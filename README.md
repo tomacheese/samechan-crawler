@@ -71,6 +71,8 @@ pnpm install
 | `PROXY_SERVER`                     | プロキシのホスト、または URL (`host:port` / `http(s)://host:port`) | なし                          |
 | `PROXY_USERNAME`, `PROXY_PASSWORD` | プロキシの認証情報 (両方指定時のみ有効)                            | なし                          |
 
+`PROXY_SERVER` を設定すると、ログインとログイン後の Twitter API 取得の両方がそのプロキシを経由します。
+
 初回実行時は、取得したツイートを通知せずに通知済みとして保存します。
 
 ## 使用方法
