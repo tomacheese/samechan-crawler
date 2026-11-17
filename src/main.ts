@@ -615,7 +615,8 @@ async function main() {
       await new Promise((resolve) => setTimeout(resolve, 1000))
     }
   } catch (error) {
-    logger.error("❌ Error: Couldn't fetch tweets", error as Error)
+    logger.error('❌ Error: Failed to fetch or notify tweets', error as Error)
+    throw error
   }
 }
 
