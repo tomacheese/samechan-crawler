@@ -265,6 +265,41 @@ function saveCookies(authToken: string, ct0: string): void {
 }
 
 // --- リトライ機能 ---
+async function isAuthenticationError(error: unknown): Promise<boolean> {
+  if (
+    typeof error !== 'object' ||
+    error === null ||
+    !('response' in error) ||
+    !(error.response instanceof Response)
+  ) {
+    return false
+  }
+  if (error.response.status === 401) {
+    return true
+  }
+  if (error.response.status !== 403) {
+    return false
+  }
+  try {
+    const body: unknown = await error.response.clone().json()
+    return (
+      typeof body === 'object' &&
+      body !== null &&
+      'errors' in body &&
+      Array.isArray(body.errors) &&
+      body.errors.some(
+        (item: unknown) =>
+          typeof item === 'object' &&
+          item !== null &&
+          'code' in item &&
+          (item.code === 32 || item.code === 89)
+      )
+    )
+  } catch {
+    return false
+  }
+}
+
 /**
  * 指数バックオフ付きで非同期処理をリトライする
  *
@@ -295,7 +330,7 @@ async function withRetry<T>(
       return await fn()
     } catch (error: unknown) {
       lastError = error
-      if (attempt >= maxRetries) {
+      if ((await isAuthenticationError(error)) || attempt >= maxRetries) {
         break
       }
 
@@ -362,12 +397,12 @@ async function loginWithRetry(
  */
 async function getAuthCookies(
   config: SamechanCrawlerConfiguration
-): Promise<{ authToken: string; ct0: string }> {
+): Promise<{ authToken: string; ct0: string; cached: boolean }> {
   // キャッシュされた Cookie があれば使用
   const cached = loadCachedCookies()
   if (cached) {
     console.log('📦 キャッシュされた Cookie を使用します')
-    return { authToken: cached.auth_token, ct0: cached.ct0 }
+    return { authToken: cached.auth_token, ct0: cached.ct0, cached: true }
   }
 
   // 設定から認証情報を取得
@@ -409,7 +444,7 @@ async function getAuthCookies(
   saveCookies(authToken, ct0)
   console.log('✅ ログイン成功、Cookie を保存しました')
 
-  return { authToken, ct0 }
+  return { authToken, ct0, cached: false }
 }
 
 // --- メイン処理 ---
@@ -433,7 +468,7 @@ async function main() {
   }
 
   // Twitter API クライアントを初期化
-  const { authToken, ct0 } = await getAuthCookies(config)
+  const cookies = await getAuthCookies(config)
 
   // fetchApi は static でインスタンス単位に渡せないため、プロキシ設定時のみ差し替える
   if (process.env.PROXY_SERVER) {
@@ -441,10 +476,40 @@ async function main() {
   }
 
   const api = new TwitterOpenApi()
-  const client = await api.getClientFromCookies({
-    auth_token: authToken,
-    ct0,
+  let client = await api.getClientFromCookies({
+    auth_token: cookies.authToken,
+    ct0: cookies.ct0,
   })
+  let canRefresh = cookies.cached
+  const withAuthenticationRecovery = async <T>(
+    fn: () => Promise<T>
+  ): Promise<T> => {
+    try {
+      return await fn()
+    } catch (error) {
+      if (!(await isAuthenticationError(error))) {
+        throw error
+      }
+      fs.rmSync(COOKIE_CACHE_FILE, { force: true })
+      if (!canRefresh) {
+        throw error
+      }
+      canRefresh = false
+      const refreshed = await getAuthCookies(config)
+      client = await api.getClientFromCookies({
+        auth_token: refreshed.authToken,
+        ct0: refreshed.ct0,
+      })
+      try {
+        return await fn()
+      } catch (retryError) {
+        if (await isAuthenticationError(retryError)) {
+          fs.rmSync(COOKIE_CACHE_FILE, { force: true })
+        }
+        throw retryError
+      }
+    }
+  }
 
   try {
     const discordConfig = config.get('discord')
@@ -465,16 +530,18 @@ async function main() {
     const targetScreenName = process.env.TARGET_TWITTER_USERNAME ?? 'SameGauu'
 
     logger.info('🔍 Fetching user info...')
-    const userResponse = await withRetry(
-      () =>
-        client
-          .getUserApi()
-          .getUserByScreenName({ screenName: targetScreenName }),
-      {
-        maxRetries: 3,
-        baseDelayMs: 2000,
-        operationName: 'ユーザー情報取得',
-      }
+    const userResponse = await withAuthenticationRecovery(() =>
+      withRetry(
+        () =>
+          client
+            .getUserApi()
+            .getUserByScreenName({ screenName: targetScreenName }),
+        {
+          maxRetries: 3,
+          baseDelayMs: 2000,
+          operationName: 'ユーザー情報取得',
+        }
+      )
     )
 
     // ⚠️ 重要: userData.data ではなく userData.user を使用
@@ -485,17 +552,19 @@ async function main() {
     const userId = userData.restId
 
     logger.info('🔍 Fetching tweets...')
-    const tweetsResponse = await withRetry(
-      () =>
-        client.getTweetApi().getUserTweets({
-          userId,
-          count: 200,
-        }),
-      {
-        maxRetries: 3,
-        baseDelayMs: 2000,
-        operationName: 'ユーザーツイート取得',
-      }
+    const tweetsResponse = await withAuthenticationRecovery(() =>
+      withRetry(
+        () =>
+          client.getTweetApi().getUserTweets({
+            userId,
+            count: 200,
+          }),
+        {
+          maxRetries: 3,
+          baseDelayMs: 2000,
+          operationName: 'ユーザーツイート取得',
+        }
+      )
     )
 
     const tweets = tweetsResponse.data.data
