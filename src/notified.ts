@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+import path from 'node:path'
 
 /**
  * 通知済みツイート ID を JSON ファイルで管理するクラス
@@ -71,7 +72,14 @@ export class Notified {
    * 通知済み ID を保存先ファイルに書き込む
    */
   public save(): void {
-    fs.writeFileSync(this.path, JSON.stringify(this.notified, null, 2))
+    const directory = fs.mkdtempSync(`${this.path}.`)
+    try {
+      const temporaryPath = path.join(directory, 'notified.json')
+      fs.writeFileSync(temporaryPath, JSON.stringify(this.notified, null, 2))
+      fs.renameSync(temporaryPath, this.path)
+    } finally {
+      fs.rmSync(directory, { recursive: true, force: true })
+    }
   }
 
   /**
