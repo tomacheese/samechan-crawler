@@ -253,15 +253,21 @@ function loadCachedCookies(): CachedCookies | null {
  */
 function saveCookies(authToken: string, ct0: string): void {
   const dir = path.dirname(COOKIE_CACHE_FILE)
-  if (dir && dir !== '.' && !fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true })
-  }
+  fs.mkdirSync(dir, { recursive: true, mode: 0o700 })
+  fs.chmodSync(dir, 0o700)
   const data: CachedCookies = {
     auth_token: authToken,
     ct0,
     savedAt: Date.now(),
   }
-  fs.writeFileSync(COOKIE_CACHE_FILE, JSON.stringify(data, null, 2))
+  const fd = fs.openSync(COOKIE_CACHE_FILE, 'a', 0o600)
+  try {
+    fs.fchmodSync(fd, 0o600)
+    fs.ftruncateSync(fd, 0)
+    fs.writeFileSync(fd, JSON.stringify(data, null, 2))
+  } finally {
+    fs.closeSync(fd)
+  }
 }
 
 // --- リトライ機能 ---
