@@ -205,8 +205,8 @@ importers:
         specifier: 1.17.14
         version: 1.17.14(eslint@10.15.0(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
       '@types/node':
-        specifier: 24.19.2
-        version: 24.19.2
+        specifier: 24.19.3
+        version: 24.19.3
       '@types/tough-cookie':
         specifier: 4.0.5
         version: 4.0.5
@@ -715,8 +715,8 @@ packages:
   '@types/node@20.19.43':
     resolution: {integrity: sha512-6oYBAi5ikg4Pl+kGsoYtawUMBT2zZMCvPNF7pVLnHZfd1zf38DRiWn/gT01RYCdUqkv7Fhr+C9ot4/tb+2sVvA==}
 
-  '@types/node@24.19.2':
-    resolution: {integrity: sha512-93d49wCWJkCyN87MxLpNN6KXPCwFw7bVUg79mGUV1OS40JGWwVCr8n61DXCSqz7CV6/VfPkb7xec7uP2M+QHWQ==}
+  '@types/node@24.19.3':
+    resolution: {integrity: sha512-oGTg5CEII0QAZVprxcT2xjcfKtZWOVSCk8nM5r3GwR1urRibeo2pj4pbYox9A326cJe6AzaV9DiC1uxiRSno2A==}
 
   '@types/set-cookie-parser@2.4.10':
     resolution: {integrity: sha512-GGmQVGpQWUe5qglJozEjZV/5dyxbOOZ0LHe/lqyWssB88Y4svNfst0uqBVscdDeIKl5Jy5+aPSvy7mI9tYRguw==}
@@ -2724,13 +2724,13 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/node@24.19.2':
+  '@types/node@24.19.3':
     dependencies:
       undici-types: 7.24.6
 
   '@types/set-cookie-parser@2.4.10':
     dependencies:
-      '@types/node': 24.19.2
+      '@types/node': 24.19.3
 
   '@types/tough-cookie@4.0.5': {}
 
